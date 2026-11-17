@@ -1,0 +1,101 @@
+safeharbor-check -- Safe Harbor checker report
+file checked : examples/patients_fake.csv
+rows         : 3
+columns      : 9
+
+WHAT THIS IS: a mechanical checker for structured CSVs against the
+identifier classes in 45 CFR 164.514(b)(2). It is a checker only.
+A clean result here does not certify that a file meets HIPAA
+requirements. Research/educational tool -- not a medical device,
+not legal advice.
+
+RESIDUAL RISK -- READ THIS:
+  * Free-text columns cannot be verified by this tool. A person can
+    type a name, a date, or any other identifier into a notes field,
+    and no pattern scan can prove they did not. Free-text columns
+    are always reported as CANNOT VERIFY -- manual review required,
+    and are never reported as passing.
+  * Class (R) -- any other unique identifying number, characteristic
+    or code -- cannot be verified mechanically. Only a human who
+    knows the data can judge it.
+  * The Safe Harbor rule also requires that the holder of the data
+    has no actual knowledge that the remaining information could be
+    used to identify a person. Actual knowledge is not in the file,
+    so no tool can check it.
+  * A report with no violations found means only: none of the
+    mechanical checks this tool can perform found a problem. It
+    does not certify that a file meets HIPAA requirements, and it
+    is not a legal determination of any kind.
+
+ZIP LIST LIMIT: the bundled restricted-prefix list is the list published by the U.S. Department of Health and Human Services (guidance dated November 26, 2012), derived from Bureau of the Census 2000 Census ZIP Code Tabulation Areas. HHS warns in that guidance not to rely on the list if more current Census data is available, and no complete updated restricted list based on a later census was found published as of 2026-11-17. A ZIP prefix that is NOT in the bundled list is therefore reported as 'not flagged by the bundled 2000-Census list -- not verified against current Census data', never as verified safe.
+Bundled restricted ZIP prefixes: 17 (HHS guidance, November 26, 2012 (2000 Census ZCTAs; 67 FR 53182, 53233-53234)).
+
+PER-CLASS RESULTS (A)-(R)
+  (A) Names
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       [VIOLATION] column 'patient_name': column name indicates this identifier class; presence of the column is flagged because the values cannot be told apart mechanically
+  (B) Geographic subdivisions smaller than a state (address, city, county, ZIP, geocodes)
+       checkable: checked by column name and by value patterns/rules
+       [VIOLATION] column 'zip_code': ZIP values longer than 3 digits: ['94110', '03601', '05401'] (3 row(s)); only the first three digits may be kept, and only under the population rule
+  (C) Dates (all elements except year) and ages over 89
+       checkable: checked by column name and by value patterns/rules
+       [VIOLATION] column 'admission_date': date values more precise than year: ['2021-03-04', 'March 4, 2020', '2019-11-20']; only the year may be kept
+       [VIOLATION] column 'age': age value(s) over 89 not aggregated to '90+': ['95'] (1 row(s))
+  (D) Telephone numbers
+       checkable: checked by column name and by value patterns/rules
+       [VIOLATION] column 'phone_number': values matching this identifier class: ['555-123-4567', '555-987-6543', '555-555-0100'] (3 row(s))
+  (E) Fax numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (F) Email addresses
+       checkable: checked by column name and by value patterns/rules
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (G) Social Security numbers
+       checkable: checked by column name and by value patterns/rules
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (H) Medical record numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (I) Health plan beneficiary numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (J) Account numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (K) Certificate / license numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (L) Vehicle identifiers and license plate numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (M) Device identifiers and serial numbers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (N) Web URLs
+       checkable: checked by column name and by value patterns/rules
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (O) IP addresses
+       checkable: checked by column name and by value patterns/rules
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (P) Biometric identifiers
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (Q) Full-face photographs and comparable images
+       checkable: checked by column name only -- values cannot be told apart mechanically
+       result   : no column detected for this class (detection is by column name and value patterns, so this is 'not detected', not 'proven absent')
+  (R) Any other unique identifying number, characteristic, or code
+       checkable: cannot be verified mechanically
+       [CANNOT_VERIFY] column 'clinician_notes': free-text column: cannot verify -- manual review required
+       [CANNOT_VERIFY] column '(whole file)': class (R) -- any other unique identifying number, characteristic, or code -- cannot be verified mechanically; nor can the rule's 'no actual knowledge' condition
+  Columns with no class match:
+       [OK] column 'study_id': no identifier pattern or class-name match found by the mechanical checks
+       [OK] column 'state': no identifier pattern or class-name match found by the mechanical checks
+       [OK] column 'site_label': no identifier pattern or class-name match found by the mechanical checks
+
+SUMMARY
+  violations found        : 5
+  columns that cannot be  : 1
+    verified mechanically
+  always unverifiable     : class (R) and the 'no actual knowledge'
+    (standing items)          condition -- see RESIDUAL RISK above
+  verdict                 : VIOLATIONS FOUND -- the file fails mechanical checks listed above.

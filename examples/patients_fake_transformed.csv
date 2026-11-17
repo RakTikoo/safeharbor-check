@@ -1,0 +1,4 @@
+study_id,admission_date,zip_code,age,state,site_label
+S-001,2021,941,90+,CA,"alpha, ward 3"
+S-002,2020,000,42,VT,"beta, ward 1"
+S-003,2019,054,67,VT,"beta, ward 2"

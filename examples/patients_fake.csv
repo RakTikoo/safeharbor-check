@@ -1,0 +1,4 @@
+study_id,patient_name,admission_date,zip_code,age,phone_number,clinician_notes,state,site_label
+S-001,Fake Person One,2021-03-04,94110,95,555-123-4567,Seen today. Doing well.,CA,"alpha, ward 3"
+S-002,Fake Person Two,"March 4, 2020",03601,42,555-987-6543,Follow up in spring.,VT,"beta, ward 1"
+S-003,Fake Person Three,2019-11-20,05401,67,555-555-0100,No concerns raised.,VT,"beta, ward 2"

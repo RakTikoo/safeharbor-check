@@ -1,0 +1,43 @@
+safeharbor-check -- transform log
+Only the columns declared on the command line were changed.
+Every other column was copied through unchanged.
+
+  dropped column          : patient_name
+  dropped column          : phone_number
+  dropped column          : clinician_notes
+  date column -> year only: admission_date
+  ZIP column -> 3 digits / 000: zip_code
+  age column -> '90+' above 89: age
+
+  date values changed     : 3
+  ZIP values changed      : 3 (of those, set to 000: 1)
+    e.g. 94110 -> 941 (first three digits kept)
+    e.g. 03601 -> 000 (prefix 036 is in the bundled restricted list)
+    e.g. 05401 -> 054 (first three digits kept)
+  age values changed      : 1
+  rows in / out           : 3 / 3
+
+ZIP LIST LIMIT: the bundled restricted-prefix list is the list published by the U.S. Department of Health and Human Services (guidance dated November 26, 2012), derived from Bureau of the Census 2000 Census ZIP Code Tabulation Areas. HHS warns in that guidance not to rely on the list if more current Census data is available, and no complete updated restricted list based on a later census was found published as of 2026-11-17. A ZIP prefix that is NOT in the bundled list is therefore reported as 'not flagged by the bundled 2000-Census list -- not verified against current Census data', never as verified safe.
+Bundled restricted ZIP prefixes: 17 (HHS guidance, November 26, 2012 (2000 Census ZCTAs; 67 FR 53182, 53233-53234)).
+
+RESIDUAL RISK -- READ THIS:
+  * Free-text columns cannot be verified by this tool. A person can
+    type a name, a date, or any other identifier into a notes field,
+    and no pattern scan can prove they did not. Free-text columns
+    are always reported as CANNOT VERIFY -- manual review required,
+    and are never reported as passing.
+  * Class (R) -- any other unique identifying number, characteristic
+    or code -- cannot be verified mechanically. Only a human who
+    knows the data can judge it.
+  * The Safe Harbor rule also requires that the holder of the data
+    has no actual knowledge that the remaining information could be
+    used to identify a person. Actual knowledge is not in the file,
+    so no tool can check it.
+  * A report with no violations found means only: none of the
+    mechanical checks this tool can perform found a problem. It
+    does not certify that a file meets HIPAA requirements, and it
+    is not a legal determination of any kind.
+
+This log records mechanical changes only. Running apply does not certify
+that the output meets HIPAA requirements; columns you did not declare
+were not examined or changed, and free-text content was not reviewed.

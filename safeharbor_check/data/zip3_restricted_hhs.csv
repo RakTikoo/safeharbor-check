@@ -1,0 +1,39 @@
+# ZIP3 prefixes whose combined population is 20,000 or fewer.
+# These prefixes must be changed to 000 under 45 CFR 164.514(b)(2)(i)(B).
+#
+# Source: U.S. Department of Health and Human Services, Office for Civil
+# Rights, "Guidance Regarding Methods for ..." (guidance on the HIPAA
+# Privacy Rule Safe Harbor method), November 26, 2012, section 3.1 and
+# its table of restricted three-digit ZIP Code Tabulation Areas.
+# The underlying population figures are from the Bureau of the Census,
+# 2000 Census, five-digit ZIP Code Tabulation Areas (ZCTAs), as first
+# published at 67 FR 53182, 53233-53234 (August 14, 2002).
+#
+# Retrieved and transcribed: 2026-11-17.
+#
+# IMPORTANT LIMIT: this is the only restricted-prefix list HHS has
+# published, and it is based on the 2000 Census. HHS warns in the same
+# guidance that covered entities should not rely on this listing if more
+# current Census data is available. No complete, updated restricted list
+# based on a later census was found published by HHS or the Census
+# Bureau as of 2026-11-17. This tool therefore treats a prefix that is
+# NOT in this list as "not flagged by the bundled 2000-Census list --
+# not verified against current Census data", never as verified safe.
+zip3
+036
+059
+063
+102
+203
+556
+692
+790
+821
+823
+830
+831
+878
+879
+884
+890
+893

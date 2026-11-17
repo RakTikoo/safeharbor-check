@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safeharbor-check"
+version = "0.1.0"
+description = "Check a structured CSV against the HIPAA Safe Harbor identifier classes (45 CFR 164.514(b)(2)) -- a checker only, it certifies nothing."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "RakTikoo" }]
+keywords = ["hipaa", "safe-harbor", "privacy", "csv", "checker", "research-data"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = []
+
+[project.scripts]
+safeharbor-check = "safeharbor_check.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/RakTikoo/safeharbor-check"
+
+[tool.setuptools.packages.find]
+include = ["safeharbor_check*"]
+
+[tool.setuptools.package-data]
+safeharbor_check = ["data/*.csv"]
