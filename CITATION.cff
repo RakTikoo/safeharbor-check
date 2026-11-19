@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: RakTikoo
+title: "safeharbor-check: check a structured CSV against the HIPAA Safe Harbor identifier classes"
+version: 0.1.0
+date-released: 2026-11-17
+license: MIT
+url: "https://github.com/RakTikoo/safeharbor-check"
+repository-code: "https://github.com/RakTikoo/safeharbor-check"
+abstract: >-
+  Checks a structured CSV against the 18 HIPAA Safe Harbor identifier
+  classes (A)-(R) in 45 CFR 164.514(b)(2), and can apply the rule's
+  three mechanical fixes to declared columns (dates to year, ZIP
+  codes to three digits, ages over 89 to 90+). A checker only: it is
+  not a certifying tool, and a clean report does not mean a file
+  meets HIPAA requirements. Research and educational tool only; not
+  a medical device; not legal advice.
+keywords:
+  - HIPAA
+  - Safe Harbor
+  - de-identification
+  - privacy
+  - CSV checker

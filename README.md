@@ -1,4 +1,4 @@
-# safeharbor-check
+# safeharbor-check — check a CSV against the HIPAA Safe Harbor identifier classes
 
 **A checker for structured CSVs against the HIPAA Safe Harbor identifier
 classes — nothing more.**
@@ -25,6 +25,10 @@ implements in its `apply` mode: dates may keep the **year**, ZIP codes
 may keep the **first three digits** if the combined population of that
 three-digit area is **more than 20,000** (otherwise the prefix becomes
 **000**), and ages over 89 are aggregated as **90 or older**.
+
+**Quick install:** `pip install git+https://github.com/RakTikoo/safeharbor-check`
+(Python 3.10+, no dependencies, runs offline). Details under
+[Install](#install).
 
 ## Demo
 
