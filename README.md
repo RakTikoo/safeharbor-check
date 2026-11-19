@@ -103,6 +103,34 @@ $ pip install git+https://github.com/RakTikoo/safeharbor-check
 
 Python ≥ 3.10, standard library only, fully offline.
 
+Or install the wheel straight from this repo's release assets (no package
+registry involved):
+
+```sh
+pip install https://github.com/RakTikoo/safeharbor-check/releases/download/v0.1.0/safeharbor_check-0.1.0-py3-none-any.whl
+```
+
+Or install from the git repo with pipx or uv:
+
+```sh
+pipx install git+https://github.com/RakTikoo/safeharbor-check.git@v0.1.0
+uv tool install --from git+https://github.com/RakTikoo/safeharbor-check.git@v0.1.0 safeharbor-check
+```
+
+With Homebrew (macOS/Linux):
+
+```sh
+brew tap RakTikoo/tools
+brew install RakTikoo/tools/safeharbor-check
+```
+
+With Scoop (Windows):
+
+```powershell
+scoop bucket add RakTikoo https://github.com/RakTikoo/scoop-bucket
+scoop install safeharbor-check
+```
+
 ## Usage
 
 ```
