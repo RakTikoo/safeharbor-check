@@ -42,8 +42,7 @@ safeharbor-check apply patients.csv --out cleaned.csv --dates admission_date --z
 ## Reading the results
 
 The `check` report gives per-class results (A)–(R), each marked
-VIOLATION or CANNOT_VERIFY with columns and example values, then a
-summary. The exit code is the verdict:
+VIOLATION or CANNOT_VERIFY with columns and example values, then a summary. The exit code is the verdict:
 
 - `0` — no mechanical violations found, no column left unverified.
   The verdict line still says this is not a certification; the
@@ -55,8 +54,7 @@ summary. The exit code is the verdict:
 
 Read "not detected" as exactly that, never as proven absent: several
 classes (names, medical record numbers, account numbers) are checked
-by column name only, because their values have no pattern. Every
-report carries a residual-risk note — read it in full.
+by column name only, because their values have no pattern. Every report carries a residual-risk note — read it in full.
 
 ## Limits
 
@@ -76,7 +74,6 @@ report carries a residual-risk note — read it in full.
   value-pattern scans (SSN, email, phone, URL, IP, precise dates) run
   on unlabelled columns as a backstop, but several classes have no value pattern.
 - Structured CSVs only — no spreadsheets, databases, images or
-  free-text documents. No medical judgements of any kind; the tool
-  looks at identifier-shaped columns only.
+  free-text documents. No medical judgements of any kind; the tool looks at identifier-shaped columns only.
 - A transformed file is not a certified file: `apply` fixes only the
   columns you declared and certifies nothing.
