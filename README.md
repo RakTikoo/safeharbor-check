@@ -202,6 +202,15 @@ mechanical checks while still carrying the residual-risk note — plus
 `95→90+`, declared drops), proof that `apply` never touches undeclared
 columns, and its refusal rules.
 
+## Use with an AI agent
+
+This repo ships a [SKILL.md](SKILL.md) written to the Agent Skills open
+standard. If your coding agent supports skills, point it at this repo
+and it can install safeharbor-check, run it on your CSVs, and read the
+results for you. The skill works as documented when the repo is cloned
+under its real name (`safeharbor-check`) — the standard matches a skill
+to its folder name.
+
 ## License
 
 MIT. Free and open source, for science.
