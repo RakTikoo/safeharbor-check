@@ -106,10 +106,28 @@ Python ≥ 3.10, standard library only, fully offline.
 ## Usage
 
 ```
-safeharbor-check check FILE [--report FILE]
+safeharbor-check check FILE [--report FILE] [--delimiter CHAR]
 safeharbor-check apply FILE --out FILE [--log FILE]
+                       [--delimiter CHAR]
                        [--dates COL,...] [--zips COL,...]
                        [--ages COL,...] [--drop COL,...]
+```
+
+The field delimiter defaults to a comma. For tab-separated input, use
+`--delimiter "\t"` on either subcommand; an actual tab character also
+works. Other delimiters must be a single character. Empty values,
+multiple characters, CR, LF and NUL are rejected with a one-line error
+and exit code 2. Delimiters are never guessed. `apply` writes output
+with the same declared delimiter, including quoting fields as needed.
+Column lists such as `--drop` remain comma-separated.
+
+When `--delimiter` is explicitly provided, its escaped representation
+appears in the report header and transform log. Omitting the flag keeps
+the existing comma-delimited behavior and output unchanged.
+
+```console
+safeharbor-check check patients.tsv --delimiter "\t"
+safeharbor-check apply patients.tsv --out cleaned.tsv --delimiter "\t" --dates admission_date
 ```
 
 - `check` exit codes: **0** = no mechanical violations found and no
@@ -179,7 +197,9 @@ detected*, never *proven absent*.
   value-pattern scans (SSN, email, phone, URL, IP, precise dates) run
   on every unlabelled column as a backstop, but classes (H)–(M), (P)
   and (Q) have no value pattern to scan for.
-- **Structured CSVs only.** No spreadsheets, no databases, no images,
+- **Structured tables with one declared delimiter only** (comma by
+  default; tab-separated files are supported with `--delimiter "\t"`).
+  No spreadsheets, no databases, no images,
   no free-text documents.
 - **This tool makes no medical judgements of any kind** — no
   diagnosis, no staging, no treatment or dose output. It looks at

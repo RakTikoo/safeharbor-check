@@ -392,5 +392,109 @@ class CliTests(unittest.TestCase):
         self.assertNotIn("Traceback", proc.stderr)
 
 
+class DelimiterTests(unittest.TestCase):
+    def test_check_tsv_matches_csv(self):
+        fields, rows = core.read_csv(ROOT / "examples/patients_fake.csv")
+        with tempfile.TemporaryDirectory() as td:
+            src = Path(td) / "patients.tsv"
+            core.write_csv(src, fields, rows, delimiter="\t")
+            for delimiter in ("\t", r"\t"):
+                with self.subTest(delimiter=delimiter):
+                    proc = run_cli("check", str(src), "--delimiter", delimiter)
+                    expected = core.format_report(core.check_data(fields, rows), str(src))
+                    self.assertEqual(proc.returncode, 1, proc.stderr)
+                    self.assertIn("delimiter    : '\\t'\n", proc.stdout)
+                    self.assertEqual(proc.stdout.replace("delimiter    : '\\t'\n", ""), expected)
+
+    def test_apply_uses_declared_delimiter_for_reading_and_writing(self):
+        with tempfile.TemporaryDirectory() as td:
+            for argument in ("\t", r"\t", ";", "|", "\u00a7"):
+                delimiter = "\t" if argument == r"\t" else argument
+                with self.subTest(delimiter=argument):
+                    src, out = Path(td) / "input.txt", Path(td) / "output.txt"
+                    rows = [{"admission_date": "2021-03-04", "keep": f"a{delimiter}b"}]
+                    core.write_csv(src, list(rows[0]), rows, delimiter=delimiter)
+                    proc = run_cli("apply", str(src), "--out", str(out),
+                                   "--dates", "admission_date", "--delimiter", argument)
+                    self.assertEqual(proc.returncode, 0, proc.stderr)
+                    fields, actual = core.read_csv(out, delimiter=delimiter)
+                    self.assertEqual(fields, list(rows[0]))
+                    self.assertEqual(actual, [{"admission_date": "2021", "keep": f"a{delimiter}b"}])
+                    log = Path(str(out) + ".log.txt").read_text(encoding="utf-8")
+                    self.assertIn(f"delimiter    : {delimiter!a}\n", log)
+
+    def test_invalid_delimiters_are_one_line_errors(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "output.csv"
+            for command in ("check", "apply"):
+                # NUL cannot be passed as an OS argument; test it in core below.
+                for delimiter in ("", ";;", "\\n", "\n", "\r"):
+                    with self.subTest(command=command, delimiter=delimiter):
+                        args = [command, str(ROOT / "examples/patients_fake.csv")]
+                        if command == "apply":
+                            args += ["--out", str(out), "--dates", "admission_date"]
+                        proc = run_cli(*args, "--delimiter", delimiter)
+                        self.assertEqual(proc.returncode, 2)
+                        self.assertEqual(proc.stdout, "")
+                        self.assertEqual(len(proc.stderr.splitlines()), 1)
+                        self.assertTrue(proc.stderr.startswith("error:"))
+                        self.assertFalse(out.exists())
+
+    def test_core_invalid_delimiter_does_not_create_output(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "output.csv"
+            for delimiter in ("", ";;", "\n", "\r", "\0", None):
+                with self.subTest(delimiter=delimiter):
+                    with self.assertRaises(core.SafeHarborError):
+                        core.write_csv(out, ["age"], [{"age": "40"}], delimiter=delimiter)
+                    self.assertFalse(out.exists())
+
+    def test_explicit_comma_reports_delimiter_but_default_does_not(self):
+        src = str(ROOT / "examples/patients_fake.csv")
+        default = run_cli("check", src)
+        explicit = run_cli("check", src, "--delimiter", ",")
+        self.assertEqual(explicit.returncode, default.returncode)
+        self.assertNotIn("delimiter    :", default.stdout)
+        self.assertEqual(explicit.stdout.replace("delimiter    : ','\n", ""), default.stdout)
+
+    def test_skill_copies_are_identical(self):
+        expected = (ROOT / "SKILL.md").read_bytes()
+        for folder in (".agents", ".claude"):
+            self.assertEqual((ROOT / folder / "skills/safeharbor-check/SKILL.md").read_bytes(), expected)
+
+    def test_default_demos_match_existing_fixtures(self):
+        fields, rows = core.read_csv(ROOT / "examples/patients_fake.csv")
+        report = core.format_report(core.check_data(fields, rows), "examples/patients_fake.csv")
+        self.assertEqual(report, (ROOT / "examples/patients_fake_report.txt").read_text(encoding="utf-8"))
+        result = core.apply_data(
+            fields, rows, date_cols=("admission_date",), zip_cols=("zip_code",),
+            age_cols=("age",), drop_cols=("patient_name", "phone_number", "clinician_notes"))
+        self.assertEqual("\n".join(result.log_lines) + "\n",
+                         (ROOT / "examples/patients_fake_transform.log.txt").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "output.csv"
+            core.write_csv(out, result.fieldnames, result.rows)
+            self.assertEqual(out.read_text(encoding="utf-8"),
+                             (ROOT / "examples/patients_fake_transformed.csv").read_text(encoding="utf-8"))
+
+    def test_saved_report_includes_declared_delimiter(self):
+        with tempfile.TemporaryDirectory() as td:
+            report = Path(td) / "report.txt"
+            proc = run_cli("check", str(ROOT / "examples/patients_fake.csv"),
+                           "--delimiter", ",", "--report", str(report))
+            self.assertEqual(proc.returncode, 1)
+            self.assertEqual(report.read_text(encoding="utf-8"), proc.stdout)
+            self.assertIn("delimiter    : ','\n", proc.stdout)
+
+    def test_read_csv_does_not_guess_tabs(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = Path(td) / "input.tsv"
+            src.write_text("age\tstate\n40\tCA\n", encoding="utf-8")
+            fields, _ = core.read_csv(src)
+            self.assertEqual(fields, ["age\tstate"])
+            fields, _ = core.read_csv(src, delimiter="\t")
+            self.assertEqual(fields, ["age", "state"])
+
+
 if __name__ == "__main__":
     unittest.main()
