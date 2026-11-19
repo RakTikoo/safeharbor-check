@@ -260,7 +260,17 @@ def _is_state_col(col_norm):
 # CSV reading
 # ---------------------------------------------------------------------------
 
-def read_csv(path):
+def validate_delimiter(delimiter):
+    """Validate one declared field separator, not a record terminator."""
+    if (not isinstance(delimiter, str) or len(delimiter) != 1
+            or delimiter in "\r\n\0"):
+        raise SafeHarborError(
+            "delimiter must be one character (not a newline or NUL)")
+    return delimiter
+
+
+def read_csv(path, *, delimiter=","):
+    validate_delimiter(delimiter)
     p = Path(path)
     if not p.is_file():
         raise SafeHarborError(f"input file not found: {path}")
@@ -270,7 +280,7 @@ def read_csv(path):
         text = p.read_text(encoding="utf-8-sig")
     except UnicodeDecodeError as exc:
         raise SafeHarborError(f"{path} is not UTF-8 text: {exc}")
-    reader = csv.DictReader(io.StringIO(text))
+    reader = csv.DictReader(io.StringIO(text), delimiter=delimiter)
     if not reader.fieldnames:
         raise SafeHarborError(f"{path} has no header row.")
     seen, dupes = set(), []
@@ -562,11 +572,13 @@ def check_data(fieldnames, rows):
     return result
 
 
-def format_report(result, source_name):
+def format_report(result, source_name, *, delimiter=None):
     restricted, src = load_restricted_zip3()
     lines = []
     lines.append("safeharbor-check -- Safe Harbor checker report")
     lines.append(f"file checked : {source_name}")
+    if delimiter is not None:
+        lines.append(f"delimiter    : {validate_delimiter(delimiter)!a}")
     lines.append(f"rows         : {result.rows}")
     lines.append(f"columns      : {len(result.columns)}")
     lines.append("")
@@ -810,8 +822,9 @@ def apply_data(fieldnames, rows, *, date_cols=(), zip_cols=(), age_cols=(),
     return ApplyResult(out_fields, out_rows, log)
 
 
-def write_csv(path, fieldnames, rows):
+def write_csv(path, fieldnames, rows, *, delimiter=","):
+    validate_delimiter(delimiter)
     with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter=delimiter)
         writer.writeheader()
         writer.writerows(rows)

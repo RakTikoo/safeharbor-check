@@ -32,6 +32,15 @@ safeharbor-check check patients.csv
 safeharbor-check apply patients.csv --out cleaned.csv --dates admission_date --zips zip_code --ages age --drop patient_name,phone_number
 ```
 
+Both commands accept `--delimiter CHAR` (comma by default). Use
+`--delimiter "\t"` or an actual tab for TSV. The declared character is
+used for input and `apply` output; it is never guessed. Other values
+must be one character, excluding CR, LF and NUL, or the command returns
+a one-line error and exit 2. Column lists remain comma-separated.
+An explicitly supplied delimiter is recorded using escaped notation
+in the report header and transform log. Without the flag, existing
+comma-delimited output is unchanged.
+
 - `--dates` columns are reduced to the year; `--zips` columns to the
   first three digits (`000` for restricted prefixes); `--ages` values
   over 89 become `90+`; `--drop` columns are removed. Undeclared
@@ -73,7 +82,8 @@ by column name only, because their values have no pattern. Every report carries 
   non-English column names can evade the name-only classes. The
   value-pattern scans (SSN, email, phone, URL, IP, precise dates) run
   on unlabelled columns as a backstop, but several classes have no value pattern.
-- Structured CSVs only — no spreadsheets, databases, images or
+- Structured tables with one declared delimiter only (comma by default;
+  use `--delimiter "\t"` for TSV) — no spreadsheets, databases, images or
   free-text documents. No medical judgements of any kind; the tool looks at identifier-shaped columns only.
 - A transformed file is not a certified file: `apply` fixes only the
   columns you declared and certifies nothing.
