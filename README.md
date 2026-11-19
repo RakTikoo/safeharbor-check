@@ -1,5 +1,7 @@
 # safeharbor-check — check a CSV against the HIPAA Safe Harbor identifier classes
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RakTikoo/safeharbor-check)
+
 **A checker for structured CSVs against the HIPAA Safe Harbor identifier
 classes — nothing more.**
 
@@ -130,6 +132,8 @@ With Scoop (Windows):
 scoop bucket add RakTikoo https://github.com/RakTikoo/scoop-bucket
 scoop install safeharbor-check
 ```
+
+**For agent users:** this repository ships a `SKILL.md` for AI agents. Install it with `npx skills add RakTikoo/safeharbor-check`.
 
 ## Usage
 
